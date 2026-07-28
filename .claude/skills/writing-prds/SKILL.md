@@ -44,7 +44,7 @@ A high-level (product-wide) PRD isn't feature detail — it's the widest cut of 
 
 Many of these are strategic rather than technical — several originate top-down (leadership, company strategy) rather than in the dev team. That doesn't make the doc less useful for developers: it makes explicit premises that would otherwise arrive only implicitly. Roadmap here means a staged evolution view, not a detailed execution schedule; roles mean who influences/decides/validates/executes, not a technical org chart. **If these questions can't be answered, the gap isn't documentation — it's missing clarity about the project itself**, and that gap degrades every design doc and AI-assisted decision built on top of it.
 
-## Structure (Not a Rigid Template)
+## Structure: Macro PRD (Not a Rigid Template)
 
 Sections vary by size and granularity — small initiatives can drop several sections; larger ones lose clarity without them. The goal is covering enough context to tell the product's story, not filling every field.
 
@@ -61,6 +61,27 @@ Sections vary by size and granularity — small initiatives can drop several sec
 | KPIs | Observable indicators of progress/success, trackable during and after delivery |
 | Stakeholders | Who has a stake, who validates, who must be consulted |
 
+## Structure: Feature-Level PRD
+
+Leaner than the macro structure — it's execution-level detail, not strategic framing. Frequent sections:
+
+| Section | Answers |
+|---|---|
+| Resumo & contexto do problema | What's being built and what problem it solves — not just "implement X" |
+| Objetivos e métricas | Expected result + how to verify it was reached, at feature scale |
+| Escopo | What's in/out for *this* delivery specifically |
+| Requisitos funcionais | Concrete capabilities/behaviors the feature must offer |
+| Requisitos não funcionais | Quality/operating constraints: latency, availability, max downtime |
+| Fluxo do usuário | Interaction sequence — surfaces gaps between a listed requirement and real usage |
+| Dependências | Other systems/services/decisions this feature needs to exist or work |
+| Arquitetura & trade-offs (optional, high-level) | Names the structural choices (language, storage, protocol) without replacing the design doc |
+| Critérios de aceitação | Checklist that turns "done" from subjective judgment into verifiable conditions |
+| Riscos & considerações gerais | Execution-level uncertainties, plus anything relevant that doesn't fit elsewhere |
+
+**Worked example — centralized rate limiter:** objetivos mensuráveis ("indisponibilidade < 1min", "P95 < 150ms"); escopo inclui limite por chave/IP + janela deslizante + resposta 429, exclui fila de prioridade e API admin; arquitetura/trade-offs registra Go + Redis + REST em uma frase, sem duplicar o design doc; risco documentado explicitamente: Redis indisponível pode falhar ou bloquear a política incorretamente.
+
+**Markdown + JSON, not either/or:** a feature PRD can also be exported as JSON alongside its Markdown — Markdown for human review/discussion, JSON (predictable keys, empty fields omitted) for pipelines, validation, and agent consumption. JSON doesn't replace the doc; it's a structured contract of the same content, useful whenever the PRD needs to feed prompts, automations, or downstream artifact generation.
+
 ## Common Mistakes
 
 - Writing PRD content that's actually a design doc — architecture, infra, or provisioning detail belongs elsewhere (see [[documentation-taxonomy]]).
@@ -71,3 +92,7 @@ Sections vary by size and granularity — small initiatives can drop several sec
 ## Who Writes It
 
 Not exclusive to PMs — developers can and should draft/contribute to a PRD when they need more clarity on a high-impact or sensitive-scope feature, especially to make implicit team knowledge explicit for an AI that has no history with the project.
+
+## Related
+
+To have an AI elicit a feature PRD through a guided Q&A flow instead of a single freeform prompt, see [[prd-interview-prompting]].
